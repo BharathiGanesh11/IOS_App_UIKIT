@@ -78,7 +78,7 @@ class SearchListVC: UIViewController {
             self.presentCustomAlert(alertTitle: "Alert!", alertMessage: "please type a username to search followes!...", btnTitle: "Ok")
             return
         }
-        let vc = FavoritesListVC()
+        let vc = FollowersListVC()
         vc.userName = userTxtField.text ?? ""
         self.navigationController?.pushViewController(vc, animated: true)
     }

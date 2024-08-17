@@ -1,5 +1,5 @@
 //
-//  FollowerCellCollectionViewCell.swift
+//  FollowerCell.swift
 //  GitHub Followers
 //
 //  Created by Kumar on 17/08/24.
