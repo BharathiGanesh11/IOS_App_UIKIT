@@ -5,11 +5,12 @@
 //  Created by Kumar on 05/08/24.
 //
 
-import Foundation
+import UIKit
 
 class GFNetworkManager {
     
     static let shared = GFNetworkManager()
+    var cache = NSCache<NSString,UIImage>()
     private init(){}
     
     let baseUrl : String = "https://api.github.com/users/"
