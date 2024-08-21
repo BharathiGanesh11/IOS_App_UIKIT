@@ -17,12 +17,14 @@ class FollowersListVC : UIViewController
     var collectionnViewDiffableDataSource : UICollectionViewDiffableDataSource<Section, Follower>!
     var snapShot : NSDiffableDataSourceSnapshot<Section, Follower>!
     var followers : [Follower] = []
+    var filteredFollowers : [Follower] = []
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureVC()
+        configureSearchController()
         configureCollectionView()
         getFollowers(userName: userName, page: page)
         configureDiffableDataSource()
@@ -59,17 +61,26 @@ class FollowersListVC : UIViewController
                 
                 if self.followers.isEmpty
                 {
-                    let emptyStateView = FollowersEmptyState(message: "There is no followers for this account , do follow this account😀..!")
-                    emptyStateView.frame = view.bounds
-                    self.view.addSubview(emptyStateView)
-                    return
+                    DispatchQueue.main.async {
+                        let emptyStateMessage = "There is no followers for this account,do follow this account 😀..!"
+                        self.showFollowerEmptyState(message: emptyStateMessage, in: self.view)
+                        return
+                    }
                 }
                 
-                self.updateData()
+                self.updateData(followers: self.followers)
             case .failure(let error):
                 self.presentCustomAlert(alertTitle: "Alert!", alertMessage: error.rawValue, btnTitle: "Ok")
             }
         }
+    }
+    
+    func configureSearchController()
+    {
+        let searchVc = UISearchController()
+        searchVc.searchResultsUpdater = self
+        searchVc.searchBar.delegate = self
+        navigationItem.searchController = searchVc
     }
     
     func configureCollectionView()
@@ -90,7 +101,7 @@ class FollowersListVC : UIViewController
         })
     }
     
-    func updateData()
+    func updateData(followers : [Follower])
     {
         snapShot = NSDiffableDataSourceSnapshot()
         snapShot.appendSections([.main])
@@ -114,6 +125,25 @@ extension FollowersListVC : UICollectionViewDelegate
             page = page + 1
             getFollowers(userName: userName, page: page)
         }
+    }
+}
+
+extension FollowersListVC : UISearchBarDelegate , UISearchResultsUpdating
+{
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let filterText = searchController.searchBar.text , !filterText.isEmpty
+        else
+        {
+            return
+        }
+        
+        filteredFollowers = followers.filter({ $0.login.lowercased().contains(filterText.lowercased()) })
+        updateData(followers: filteredFollowers)
+        
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        updateData(followers: followers)
     }
 }
 

@@ -14,6 +14,7 @@ class FollowersEmptyState: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        config()
     }
     
     required init?(coder: NSCoder) {
@@ -48,8 +49,8 @@ class FollowersEmptyState: UIView {
             
             emptyStateImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1.3),
             emptyStateImageView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1.3),
-            emptyStateImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 120),
-            emptyStateImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 70)
+            emptyStateImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 200),
+            emptyStateImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 100)
         ])
     }
 }
