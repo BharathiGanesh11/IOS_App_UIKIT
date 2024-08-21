@@ -41,8 +41,10 @@ class FollowersListVC : UIViewController
     
     func getFollowers(userName : String , page : Int)
     {
+        showLoadingScreen()
         GFNetworkManager.shared.getFollowers(userName: userName, page: page) { [weak self] result in
             guard let self = self else { return }
+            self.removeLoadingScreen()
             switch result {
             case .success(let followers):
                 if followers.count < 100
@@ -54,6 +56,15 @@ class FollowersListVC : UIViewController
                     hasMoreFollowes = true
                 }
                 self.followers.append(contentsOf: followers)
+                
+                if self.followers.isEmpty
+                {
+                    let emptyStateView = FollowersEmptyState(message: "There is no followers for this account , do follow this account😀..!")
+                    emptyStateView.frame = view.bounds
+                    self.view.addSubview(emptyStateView)
+                    return
+                }
+                
                 self.updateData()
             case .failure(let error):
                 self.presentCustomAlert(alertTitle: "Alert!", alertMessage: error.rawValue, btnTitle: "Ok")
