@@ -18,6 +18,7 @@ class FollowersListVC : UIViewController
     var snapShot : NSDiffableDataSourceSnapshot<Section, Follower>!
     var followers : [Follower] = []
     var filteredFollowers : [Follower] = []
+    var isFiltered : Bool = false
     
     
     override func viewDidLoad() {
@@ -110,6 +111,14 @@ class FollowersListVC : UIViewController
             self.collectionnViewDiffableDataSource.apply(self.snapShot, animatingDifferences: true)
         }
     }
+    
+    func ShowUserInfoVC(userName : String)
+    {
+        let userInfoVc = UserInfoVCViewController()
+        userInfoVc.userName = userName
+        let vc = UINavigationController(rootViewController: userInfoVc)
+        present(vc, animated: true)
+    }
 }
 
 extension FollowersListVC : UICollectionViewDelegate
@@ -126,6 +135,11 @@ extension FollowersListVC : UICollectionViewDelegate
             getFollowers(userName: userName, page: page)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let userName = isFiltered ? filteredFollowers[indexPath.row].login : followers[indexPath.row].login
+        ShowUserInfoVC(userName: userName)
+    }
 }
 
 extension FollowersListVC : UISearchBarDelegate , UISearchResultsUpdating
@@ -137,6 +151,8 @@ extension FollowersListVC : UISearchBarDelegate , UISearchResultsUpdating
             return
         }
         
+        isFiltered = true
+        
         filteredFollowers = followers.filter({ $0.login.lowercased().contains(filterText.lowercased()) })
         updateData(followers: filteredFollowers)
         
@@ -144,6 +160,7 @@ extension FollowersListVC : UISearchBarDelegate , UISearchResultsUpdating
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         updateData(followers: followers)
+        isFiltered = false
     }
 }
 
