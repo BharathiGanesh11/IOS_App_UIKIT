@@ -114,7 +114,7 @@ class FollowersListVC : UIViewController
     
     func ShowUserInfoVC(userName : String)
     {
-        let userInfoVc = UserInfoVCViewController()
+        let userInfoVc = UserInfoVCV()
         userInfoVc.userName = userName
         let vc = UINavigationController(rootViewController: userInfoVc)
         present(vc, animated: true)
