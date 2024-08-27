@@ -18,6 +18,8 @@ class GFInfoItemVC: UIViewController {
     
     var user : User!
     
+    weak var delegate : UserInfoVCVDelegate!
+    
     init(user: User) {
         super.init(nibName: nil, bundle: nil)
         self.user = user
@@ -32,6 +34,7 @@ class GFInfoItemVC: UIViewController {
         configVC()
         configStackView()
         layoutUI()
+        configActionButton()
     }
     
     private func configVC()
@@ -69,5 +72,15 @@ class GFInfoItemVC: UIViewController {
             button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
             button.heightAnchor.constraint(equalToConstant: 44)
         ])
+    }
+    
+    private func configActionButton()
+    {
+        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+    }
+    
+    @objc func buttonAction()
+    {
+        
     }
 }

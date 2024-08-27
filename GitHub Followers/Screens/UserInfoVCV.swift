@@ -7,6 +7,12 @@
 
 import UIKit
 
+protocol UserInfoVCVDelegate : AnyObject
+{
+    func didTapGetProfile(with user : User)
+    func didTapGetFollowers(with user : User)
+}
+
 class UserInfoVCV: UIViewController {
     
     var userName : String!
@@ -14,8 +20,11 @@ class UserInfoVCV: UIViewController {
     let headerContainerView = UIView()
     let infoRepoConainerView = UIView()
     let infoFollowerContainerView = UIView()
+    let dateLabel = GFbodyLabel(textAlignment: .center)
     
     var containerViews : [UIView] = []
+    
+    weak var delegate : FollowersListVCDelegate!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,9 +46,7 @@ class UserInfoVCV: UIViewController {
             case .success(let userInfo):
                 print(userInfo)
                 DispatchQueue.main.async {
-                    self.addChildVC(vc: UserInfoHeaderVC(userInfo: userInfo), view: self.headerContainerView)
-                    self.addChildVC(vc: RepoAndGistInfoVC(user: userInfo), view: self.infoRepoConainerView)
-                    self.addChildVC(vc: FollowingAndFollowersInfoVC(user: userInfo), view: self.infoFollowerContainerView)
+                    self.configUIComponents(with: userInfo)
                 }
             case .failure(let error):
                 presentCustomAlert(alertTitle: "Something Went Wrong", alertMessage: error.rawValue, btnTitle: "Ok")
@@ -47,11 +54,25 @@ class UserInfoVCV: UIViewController {
         }
     }
     
+    func configUIComponents(with user : User)
+    {
+        let repoAndGistVC = RepoAndGistInfoVC(user: user)
+        repoAndGistVC.delegate = self
+        
+        let followingAndFollowersVC = FollowingAndFollowersInfoVC(user: user)
+        followingAndFollowersVC.delegate = self
+        
+        addChildVC(vc: UserInfoHeaderVC(userInfo: user), view: self.headerContainerView)
+        addChildVC(vc: repoAndGistVC, view: self.infoRepoConainerView)
+        addChildVC(vc: followingAndFollowersVC, view: infoFollowerContainerView)
+        dateLabel.text = "Github since \(user.createdAt.convertToGFDateFormat())"
+    }
+    
     func layoutUI()
     {
         let padding : CGFloat = 20
         
-        containerViews = [headerContainerView , infoRepoConainerView , infoFollowerContainerView]
+        containerViews = [headerContainerView , infoRepoConainerView , infoFollowerContainerView , dateLabel]
         
         for containerView in containerViews {
             view.addSubview(containerView)
@@ -73,6 +94,9 @@ class UserInfoVCV: UIViewController {
             infoFollowerContainerView.topAnchor.constraint(equalTo: infoRepoConainerView.bottomAnchor, constant: 12),
             infoFollowerContainerView.heightAnchor.constraint(equalToConstant: 150),
             
+            dateLabel.topAnchor.constraint(equalTo: infoFollowerContainerView.bottomAnchor, constant: padding),
+            dateLabel.heightAnchor.constraint(equalToConstant: 18)
+            
         ])
     }
     
@@ -87,5 +111,27 @@ class UserInfoVCV: UIViewController {
     @objc func dismissVC()
     {
         self.dismiss(animated: true)
+    }
+}
+
+extension UserInfoVCV : UserInfoVCVDelegate
+{
+    func didTapGetProfile(with user : User) {
+        guard let url = URL(string: user.htmlUrl) else {
+            presentCustomAlert(alertTitle: "Invalid URL", alertMessage: "The url attached with this profile is Invalid!", btnTitle: "Ok")
+            return
+        }
+        
+        presentSafariWebView(url: url)
+    }
+    
+    func didTapGetFollowers(with user : User) {
+        guard user.followers != 0 else {
+            presentCustomAlert(alertTitle: "GitHub", alertMessage: "This user dosent have followers", btnTitle: "so sad")
+            return
+        }
+        
+        dismissVC()
+        delegate.reloadWithNewUser(username: user.login)
     }
 }

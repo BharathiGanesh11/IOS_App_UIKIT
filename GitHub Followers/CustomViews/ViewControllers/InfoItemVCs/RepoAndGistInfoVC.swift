@@ -21,4 +21,8 @@ class RepoAndGistInfoVC : GFInfoItemVC
         
         button.set(background: .systemPurple, title: "Get Profile")
     }
+    
+    override func buttonAction() {
+        delegate.didTapGetProfile(with: user)
+    }
 }

@@ -1,5 +1,6 @@
 
 import UIKit
+import SafariServices
 
 
 fileprivate var containerView : UIView!
@@ -59,5 +60,12 @@ extension UIViewController
         let emptyStateView = FollowersEmptyState(message: message)
         emptyStateView.frame = view.bounds
         view.addSubview(emptyStateView)
+    }
+    
+    func presentSafariWebView(url : URL)
+    {
+        let safariVC = SFSafariViewController(url: url)
+        safariVC.preferredControlTintColor = .systemGreen
+        present(safariVC, animated: true)
     }
 }

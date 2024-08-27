@@ -21,4 +21,8 @@ class FollowingAndFollowersInfoVC : GFInfoItemVC
         
         button.set(background: .systemGreen, title: "Get Followers")
     }
+    
+    override func buttonAction() {
+        delegate.didTapGetFollowers(with: user)
+    }
 }
