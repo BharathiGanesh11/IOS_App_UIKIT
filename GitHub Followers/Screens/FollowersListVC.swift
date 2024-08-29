@@ -45,6 +45,8 @@ class FollowersListVC : UIViewController
         self.view.backgroundColor = .systemBlue
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.title = userName
+        let rightBarButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addToFavorites))
+        self.navigationItem.rightBarButtonItem = rightBarButton
     }
     
     func getFollowers(userName : String , page : Int)
@@ -124,6 +126,29 @@ class FollowersListVC : UIViewController
         userInfoVc.delegate = self
         let vc = UINavigationController(rootViewController: userInfoVc)
         present(vc, animated: true)
+    }
+    
+    @objc func addToFavorites()
+    {
+        GFNetworkManager.shared.getUserInfo(userName: userName) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let userInfo):
+                let favorite = Follower(login: userInfo.login, avatarUrl: userInfo.avatarUrl)
+                PersistenceManager.updateFavorites(actionType: .add, with: favorite) { error in
+                    guard let error = error else {
+                        self.presentCustomAlert(alertTitle: "GitHub", alertMessage: GFError.addedToFavoriteList.rawValue, btnTitle: "Ok")
+                        return
+                    }
+                    
+                    self.presentCustomAlert(alertTitle: "Something went wrong", alertMessage: error.rawValue, btnTitle: "Ok")
+                    
+                }
+            case .failure(let error):
+                self.presentCustomAlert(alertTitle: "Something went wrong", alertMessage: error.rawValue, btnTitle: "Ok")
+            }
+        }
     }
 }
 
