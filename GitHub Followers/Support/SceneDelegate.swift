@@ -14,45 +14,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = createTabBarVC()
+        window?.rootViewController = GFTabBarController()
         window?.makeKeyAndVisible()
-        
-        configNavigatioBar()
-    }
-    
-    func createSearchListNC() -> UINavigationController
-    {
-        let vc = SearchListVC()
-        vc.title = "Search"
-        //vc.navigationItem.largeTitleDisplayMode = .inline
-        vc.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-        let NC = UINavigationController(rootViewController: vc)
-        return NC
-    }
-    
-    func createFavoritesListNC() -> UINavigationController
-    {
-        let vc = FavoritesListVC()
-        vc.title = "Favorites"
-        vc.navigationItem.largeTitleDisplayMode = .inline
-        vc.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
-        let NC = UINavigationController(rootViewController: vc)
-        return NC
-    }
-    
-    func createTabBarVC() -> UITabBarController
-    {
-        let tabVC = UITabBarController()
-        //tabVC.tabBar.isTranslucent = false
-        tabVC.tabBar.barTintColor = .systemGray
-        UITabBar.appearance().tintColor = .systemGreen
-        tabVC.viewControllers = [createSearchListNC() , createFavoritesListNC()]
-        return tabVC
-    }
-    
-    func configNavigatioBar()
-    {
-        UINavigationBar.appearance().tintColor = .systemGreen
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

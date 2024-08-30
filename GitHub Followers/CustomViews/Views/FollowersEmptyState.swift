@@ -21,11 +21,11 @@ class FollowersEmptyState: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(message : String)
+    convenience init(message : String)
     {
-        super.init(frame: .zero)
+        self.init(frame: .zero)
         messageLabel.text = message
-        config()
+        //config()
     }
     
     func config()

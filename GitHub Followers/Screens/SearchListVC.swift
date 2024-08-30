@@ -20,6 +20,7 @@ class SearchListVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+        userTxtField.text = ""
     }
     
     func configLogoImg()
@@ -78,6 +79,7 @@ class SearchListVC: UIViewController {
             self.presentCustomAlert(alertTitle: "Alert!", alertMessage: "please type a username to search followes!...", btnTitle: "Ok")
             return
         }
+        userTxtField.resignFirstResponder()
         let vc = FollowersListVC()
         vc.userName = userTxtField.text ?? ""
         self.navigationController?.pushViewController(vc, animated: true)
